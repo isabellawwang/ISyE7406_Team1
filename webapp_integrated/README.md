@@ -3,6 +3,8 @@
 
 Built with **Flask**, **SciPy**, **Google Places API**, **SearchAPI.io**, and Walmart product data.
 
+Note: To run the app, walmart dataset is needed with clusters as "merged_recipe_price_nodupl_with_clusters.csv" within the same directory as app.py
+
 ---
 
 ## 🚀 Overview
