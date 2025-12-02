@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Recipe Plan Results{% endblock %}
+
+{% block content %}
+<h1>Daily Recipe Plan</h1>
+
+<p class="muted">
+  Location: {{ plan.location.city }}, {{ plan.location.state }} ({{ zip_code }})<br>
+  Status: {{ plan.status }}
+</p>
+
+<h2>Nutrition Totals</h2>
+<ul>
+  <li>Calories: {{ "%.1f"|format(plan.nutrition_totals.kcal) }}</li>
+  <li>Protein: {{ "%.1f"|format(plan.nutrition_totals.protein) }} g</li>
+  <li>Fat: {{ "%.1f"|format(plan.nutrition_totals.fat) }} g</li>
+  <li>Carbs: {{ "%.1f"|format(plan.nutrition_totals.carbs) }} g</li>
+</ul>
+
+<h2>Selected Recipes</h2>
+<ul>
+  {% for recipe_name, servings in plan.selection.items() %}
+    <li><strong>{{ recipe_name }}</strong> — {{ servings }} serving(s)</li>
+  {% endfor %}
+</ul>
+
+<h2>Total Daily Cost (incl. shipping)</h2>
+<p><strong>${{ "%.2f"|format(plan.daily_cost) }}</strong></p>
+
+<h2>Per-Recipe Details</h2>
+{% for recipe_name, info in plan.recipe_cost_details.items() %}
+  <div class="store-card">
+    <h3>{{ recipe_name }}</h3>
+    <p>
+      Servings: {{ info.servings }}<br>
+      Cost per serving (incl. shipping): ${{ "%.2f"|format(info.cost_per_serving_with_shipping) }}<br>
+      Total cost: ${{ "%.2f"|format(info.total_cost) }}
+    </p>
+    <details>
+      <summary>Show ingredient-level choices</summary>
+      <table border="1" cellspacing="0" cellpadding="4" style="margin-top:8px; font-size:13px;">
+        <tr>
+          {% for col in info.ingredients_table.columns %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+        {% for _, row in info.ingredients_table.iterrows() %}
+          <tr>
+            {% for col in info.ingredients_table.columns %}
+              <td>{{ row[col] }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+    </details>
+  </div>
+{% endfor %}
+
+<hr>
+<h2>Next: Find Minimal Stores for These Ingredients</h2>
+
+<p class="muted">
+  These are the unique ingredients across your planned recipes. We'll send them
+  to the Grocery Trip Optimizer to find a small set of nearby stores that
+  covers as many as possible.
+</p>
+
+<form method="post" action="{{ url_for('index') }}">
+  <input type="hidden" name="zip_code" value="{{ zip_code }}">
+  <input type="hidden" name="max_stores" value="10">
+  <textarea name="items" style="display:none;">{{ plan.ingredients_text }}</textarea>
+  <button type="submit">Find Minimal Stores</button>
+</form>
+
+<p class="muted" style="margin-top:16px;">
+  <a href="{{ url_for('recipe_plan') }}">↩ Adjust recipe plan</a>
+</p>
+{% endblock %}

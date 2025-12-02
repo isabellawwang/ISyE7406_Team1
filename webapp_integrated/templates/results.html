@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Optimized Store List{% endblock %}
+
+{% block content %}
+<h1>Optimized Store List</h1>
+
+<p class="muted">
+  ZIP / PIN: <strong>{{ zip_code }}</strong>
+  {% if location_info.city %}
+    &nbsp;·&nbsp; Area: <strong>{{ location_info.city }} {{ location_info.state }}</strong>
+  {% endif %}
+</p>
+
+<h2>Your requested items</h2>
+<p>
+  {% for item in items %}
+    <span class="pill">{{ item }}</span>
+  {% endfor %}
+</p>
+
+<hr>
+
+{% if chosen_stores %}
+  <h2>Recommended stores ({{ chosen_stores|length }})</h2>
+  <p class="muted">
+    Visit these stores to cover as many items as possible:
+  </p>
+
+  {% for store in chosen_stores %}
+    <div class="store-card">
+      <h3>{{ store }}</h3>
+      <p class="muted">Covers:</p>
+      <p>
+        {% for item in store_to_items[store] %}
+          <span class="badge">{{ item }}</span>
+        {% endfor %}
+      </p>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>No stores found with any of the requested items (based on the current mock logic).</p>
+{% endif %}
+
+<hr>
+
+{% if uncovered_items %}
+  <h2>Items not covered by chosen stores</h2>
+  <p class="muted">
+    These items are not covered by the selected minimal store set:
+  </p>
+  <p>
+    {% for item in uncovered_items %}
+      <span class="pill">{{ item }}</span>
+    {% endfor %}
+  </p>
+{% endif %}
+
+{% if truly_unavailable %}
+  <h2>Items not found in any store inventory</h2>
+  <p class="muted">
+    These items were not present in any of the store inventories returned:
+  </p>
+  <p>
+    {% for item in truly_unavailable %}
+      <span class="pill">{{ item }}</span>
+    {% endfor %}
+  </p>
+{% endif %}
+
+<p><a href="/">← New search</a></p>
+{% endblock %}

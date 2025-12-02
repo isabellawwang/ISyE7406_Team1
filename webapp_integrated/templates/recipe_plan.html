@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Recipe Plan Optimizer{% endblock %}
+
+{% block content %}
+<h1>Recipe Plan Optimizer</h1>
+<p class="muted">
+  You can either let the app choose recipes based on calories/macros,
+  <em>or</em> skip that and directly enter recipe names you want.
+</p>
+
+{% if error %}
+  <div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="post">
+  <h3>Mode</h3>
+  <label>
+    <input type="checkbox" name="use_nutrition_lp" value="1" checked>
+    Use nutrition-based LP to select recipes
+  </label>
+  <br>
+  <small class="muted">
+    Uncheck this if you want to manually provide recipe names.
+  </small>
+
+  <hr>
+
+  <h3>Option A: Nutrition Targets (used if checkbox is ON)</h3>
+  <label for="zip_code"><strong>PIN / ZIP code</strong></label><br>
+  <input type="text" id="zip_code" name="zip_code"
+         value="{{ prev_zip or '' }}" placeholder="30332">
+  <br><br>
+
+  Calories:
+  <input type="number" name="kcal_target" value="{{ prev_kcal or '2200' }}"><br>
+  Protein (g):
+  <input type="number" name="protein_min" value="{{ prev_protein or '100' }}"><br>
+  Fat (g):
+  <input type="number" name="fat_min" value="{{ prev_fat or '50' }}"><br>
+  Carbs (g):
+  <input type="number" name="carbs_min" value="{{ prev_carbs or '200' }}"><br><br>
+
+  Minimum number of different recipes:
+  <input type="number" name="min_recipes" value="{{ prev_min_recipes or '4' }}" min="1"><br><br>
+
+  <hr>
+
+  <h3>Option B: Manual Recipe Names (used if checkbox is OFF)</h3>
+  <label for="manual_recipes"><strong>Recipe titles</strong> (one per line)</label><br>
+  <textarea id="manual_recipes"
+            name="manual_recipes"
+            rows="6"
+            placeholder="Pasta&#10;Cookies&#10;Pizza">{{ prev_manual_recipes or '' }}</textarea>
+  <br><br>
+
+  <button type="submit">Optimize Plan</button>
+</form>
+
+<p class="muted" style="margin-top:16px;">
+  Or go directly to the <a href="{{ url_for('index') }}">Grocery Trip Optimizer</a>.
+</p>
+{% endblock %}

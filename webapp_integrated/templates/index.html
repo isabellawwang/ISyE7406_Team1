@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Grocery Trip Optimizer{% endblock %}
+
+{% block content %}
+<h1>Grocery Trip Optimizer</h1>
+<p class="muted">
+  Enter your <strong>PIN / ZIP code</strong> and your grocery list
+  (<em>one item per line</em>).<br>
+  The app figures out nearby stores and chooses a small set of stores that
+  covers as many items as possible, to minimize trips.
+</p>
+
+{% if error %}
+  <div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="post">
+  <label for="zip_code"><strong>PIN / ZIP code</strong></label><br>
+  <input type="text"
+         id="zip_code"
+         name="zip_code"
+         placeholder="e.g. 30332"
+         value="{{ prev_zip or '' }}">
+  <br><br>
+
+<label for="max_stores"><strong>How many nearby stores to consider?</strong></label><br>
+<input
+  type="number"
+  id="max_stores"
+  name="max_stores"
+  min="1"
+  max="30"
+  value="{{ prev_max_stores or 5 }}"
+>
+<br><br>
+
+  <label for="items"><strong>Grocery items</strong> (one per line)</label><br>
+  <textarea id="items"
+            name="items"
+            rows="10"
+            placeholder="milk&#10;eggs&#10;bread&#10;toilet paper">{{ prev_items or '' }}</textarea>
+  <br><br>
+
+  <button type="submit">Optimize Stores</button>
+</form>
+{% endblock %}
